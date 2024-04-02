@@ -1,0 +1,232 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <time.h>
+
+// sample events
+#define ARRIVAL_EVENT 1
+#define COMPLETION_EVENT 2
+#define TIME_SLICE_EVENT 3
+
+// event structure
+struct event {
+    float time;
+    int type;
+    int process_id;
+    struct event* next;
+};
+
+// process structure
+struct process {
+    int id;
+    float arrival_time;
+    float service_time;
+    float remaining_time;
+    float start_time;
+    float end_time;
+    int priority;
+};
+
+// ready queue structure
+struct ready_queue {
+    struct process* process;
+    struct ready_queue* next;
+};
+
+// scheduling algorithm types
+enum scheduling_algorithm {
+    FCFS,
+    SRTF,
+    RR
+};
+
+// function prototypes
+void init(int argc, char* argv[]);
+int run_sim();
+void generate_report();
+int schedule_event(struct event* new_event);
+float urand();
+float genexp(float lambda);
+struct process* generate_process(float lambda, float mu, int process_id);
+void insert_ready_queue(struct process* process);
+void remove_ready_queue(struct process* process);
+struct process* get_next_process();
+int process_arrival_event(struct event* event);
+int process_completion_event(struct event* event);
+int process_time_slice_event(struct event* event);
+
+// global variables
+struct event* event_queue_head; // head of event queue
+float current_time; // simulation clock
+float lambda; // average arrival rate (in processes/second)
+float mu; // average service time (in seconds)
+int num_processes_completed; // number of processes completed
+enum scheduling_algorithm algorithm; // chosen scheduling algorithm
+int quantum; // quantum interval for Round Robin algorithm
+struct ready_queue* ready_queue_head; // head of ready queue
+
+float urand() {
+    return (float)rand() / (float)RAND_MAX;
+}
+
+float genexp(float lambda) {
+    float u = urand();
+    return -log(1 - u) / lambda;
+}
+
+struct process* generate_process(float lambda, float mu, int process_id) {
+    struct process* new_process = (struct process*)malloc(sizeof(struct process));
+    if (new_process == NULL) {
+        fprintf(stderr, "Failed to allocate memory for new process.\n");
+        exit(EXIT_FAILURE);
+    }
+    
+    new_process->id = process_id;
+    new_process->arrival_time = current_time + genexp(lambda);
+    new_process->service_time = genexp(1.0 / mu);
+    new_process->remaining_time = new_process->service_time;
+    new_process->start_time = -1;
+    new_process->end_time = -1;
+    new_process->priority = 0;
+    
+    return new_process;
+}
+
+void insert_ready_queue(struct process* process) {
+    // Implementation needed
+}
+
+void remove_ready_queue(struct process* process) {
+    // Implementation needed
+}
+
+struct process* get_next_process() {
+    // Implementation needed
+    return NULL;
+}
+
+int process_arrival_event(struct event* event) {
+    printf("Processing arrival event for process %d\n", event->process_id);
+
+    struct process* proc = generate_process(lambda, mu, event->process_id);
+    insert_ready_queue(proc);
+
+    struct event* next_event = (struct event*)malloc(sizeof(struct event));
+    if (next_event == NULL) {
+        fprintf(stderr, "Failed to allocate memory for new event.\n");
+        exit(EXIT_FAILURE);
+    }
+    next_event->time = current_time + genexp(lambda);
+    next_event->type = ARRIVAL_EVENT;
+    next_event->process_id = proc->id + 1;
+    schedule_event(next_event);
+
+    return 0;
+}
+
+int process_completion_event(struct event* event) {
+    printf("Processing completion event for process %d\n", event->process_id);
+    // Implementation needed
+    return 0;
+}
+
+int process_time_slice_event(struct event* event) {
+    printf("Processing time slice event for process %d\n", event->process_id);
+    // Implementation needed
+    return 0;
+}
+
+void generate_report() {
+    printf("Report generation not implemented yet.\n");
+}
+
+int schedule_event(struct event* new_event) {
+    struct event* curr = event_queue_head;
+    if (curr == NULL || new_event->time < curr->time) {
+        new_event->next = curr;
+        event_queue_head = new_event;
+    } else {
+        while (curr->next != NULL && new_event->time > curr->next->time) {
+            curr = curr->next;
+        }
+        new_event->next = curr->next;
+        curr->next = new_event;
+    }
+    return 0;
+}
+
+void init(int argc, char* argv[]) {
+    if (argc < 5) {
+        printf("Usage: %s <algorithm> <lambda> <mu    <quantum>\n", argv[0]);
+        exit(1);
+    }
+    
+    algorithm = atoi(argv[1]);
+    lambda = atof(argv[2]);
+    mu = atof(argv[3]);
+    quantum = atoi(argv[4]);
+
+    srand((unsigned int)time(NULL));  // Seed the random number generator
+
+    event_queue_head = NULL;
+    ready_queue_head = NULL;
+    current_time = 0;
+    num_processes_completed = 0;
+
+    // Schedule the first arrival event
+    struct event* first_arrival_event = (struct event*)malloc(sizeof(struct event));
+    if (first_arrival_event == NULL) {
+        fprintf(stderr, "Failed to allocate memory for first arrival event.\n");
+        exit(EXIT_FAILURE);
+    }
+    first_arrival_event->time = 0;
+    first_arrival_event->type = ARRIVAL_EVENT;
+    first_arrival_event->process_id = 1; // Starting with process ID 1
+    first_arrival_event->next = NULL;
+    schedule_event(first_arrival_event);
+}
+
+int run_sim(int max_processes) {
+    struct event* event;
+    while (num_processes_completed < max_processes && event_queue_head != NULL) {
+        event = event_queue_head;
+
+        current_time = event->time;
+        switch (event->type) {
+            case ARRIVAL_EVENT:
+                process_arrival_event(event);
+                break;
+            case COMPLETION_EVENT:
+                process_completion_event(event);
+                break;
+            case TIME_SLICE_EVENT:
+                process_time_slice_event(event);
+                break;
+            default:
+                printf("Error: invalid event type\n");
+                exit(1);
+        }
+
+        event_queue_head = event->next;
+        free(event);
+    }
+    return 0;
+}
+
+
+int main(int argc, char *argv[]) {
+    if (argc < 6) {
+        printf("Usage: %s <algorithm> <lambda> <mu> <quantum> <max_processes>\n", argv[0]);
+        return 1;
+    }
+
+    init(argc, argv);
+
+    int max_processes = atoi(argv[5]);  // Get max_processes from command line argument
+    run_sim(max_processes);
+
+    generate_report();
+
+    return 0;
+}
+
