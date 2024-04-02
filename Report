@@ -1,0 +1,16 @@
+Introduction
+The Process Scheduler Simulator is a program designed to emulate the behavior of a process scheduler using various scheduling algorithms commonly employed in operating systems. It provides a platform to study the performance and behavior of different scheduling strategies in a controlled environment.
+Features
+Scheduling Algorithms: The simulator supports three scheduling algorithms:
+First Come, First Served (FCFS)
+Shortest Remaining Time First (SRTF)
+Round Robin (RR)
+Dynamic Simulation: Processes are generated dynamically based on specified arrival and service time distributions.
+Customizable Parameters: Users can adjust simulation parameters such as arrival rate, service time, and quantum interval.
+Simulation Termination: The simulation stops automatically after completing a specified number of processes, allowing for controlled experimentation.
+Usage
+Compilation: Compile the program using the provided gcc command.
+Execution: Run the compiled program with appropriate command-line arguments to specify the scheduling algorithm, arrival rate, service time, quantum interval, and maximum number of processes.
+Interpretation: Analyze the output to understand the behavior of the chosen scheduling algorithm under the given parameters.
+Conclusion
+The Process Scheduler Simulator serves as a valuable tool for studying and comparing different process scheduling algorithms. By allowing users to configure various parameters and observe the simulation output, it facilitates experimentation and enhances understanding of scheduling strategies in operating systems. Whether for educational purposes or research, this simulator provides a versatile platform for exploring process scheduling concepts.
