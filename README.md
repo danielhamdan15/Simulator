@@ -42,3 +42,16 @@ This command will run the simulator with the SRTF algorithm, an arrival rate of 
 
 - `simulator.c`: Source code of the simulator.
 - `README.md`: This file.
+
+
+First you go to terminal
+cd downloads (where the code is available on the computer)
+then scp simulator.c username@zeus.cs.txstate.edu:~/
+then it should show up as downloaded on zeus
+
+to run it on terminal you must apply the steps above to see the process event running
+
+cd downloads
+downloads % gcc simulator.c -o simulator -lm
+then you can put your choosing of the .simulator.c
+gcc -o simulator simulator.c -lm
