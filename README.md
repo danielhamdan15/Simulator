@@ -40,7 +40,7 @@ This command will run the simulator with the SRTF algorithm, an arrival rate of 
 
 ## Files
 
-- `simulator.c`: Source code of the simulator.
+- `simulator1.c`: Source code of the simulator.
 - `README.md`: This file.
 ```bash
 First you go to terminal
@@ -51,6 +51,6 @@ then it should show up as downloaded on zeus
 to run it on terminal you must apply the steps above to see the process event running
 
 cd downloads
-downloads % gcc simulator.c -o simulator -lm
-then you can put your choosing of the .simulator.c
-gcc -o simulator simulator.c -lm
+downloads % gcc simulator1.c -o simulator1 -lm
+then you can put your choosing of the .simulator1.c
+gcc -o simulator1 simulator1.c -lm
